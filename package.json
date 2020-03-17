@@ -4,11 +4,15 @@
   "description": "Simple tetris",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack",
+    "test": "mocha test/**/*Spec.js"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
-    "mocha": "^6.2.2"
+    "html-webpack-plugin": "^3.2.0",
+    "mocha": "^6.2.2",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2"
   },
   "author": "schwarzwald",
   "license": "ISC"
