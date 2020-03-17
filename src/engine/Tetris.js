@@ -6,7 +6,11 @@ module.exports = class Tetris {
     this.generator = generator;
     this.listeners = new Map();
 
-    this.grid = [...new Array(height)].map(r => new Array(width));
+    this.grid = [...new Array(height)].map(r => {
+      let row = new Array(width);
+      row.fill(null);
+      return row;
+    });
 
     this.current = null;
     this.next = null;
@@ -48,7 +52,7 @@ module.exports = class Tetris {
     let position = { ...this.position };
     if (dir === 'LEFT') {
       position.x--;
-    } else {
+    } else if (dir === 'RIGHT') {
       position.x++;
     }
 
@@ -59,7 +63,7 @@ module.exports = class Tetris {
   }
 
   rotate(dir) {
-    if (this._isValid(this.current.rotate(dir), position)) {
+    if (this._isValid(this.current.rotate(dir), this.position)) {
       this.current = this.current.rotate(dir);
       this._fireEvent('rotate', { tile: this.current });
     }
@@ -120,6 +124,28 @@ module.exports = class Tetris {
     }
 
     this._fireEvent('dropend', {});
+
+    let removed = [];
+    for (let i = this.height - 1; i >= 0; i--) {
+      if (this.grid[i].filter(c => c != null).length == this.width) {
+        removed.push(i);
+      }
+    }
+
+    for (let i of removed) {
+      this.grid.splice(i, 1);
+    }
+
+    for (let i of removed) {
+      let row = new Array(this.width);
+      row.fill(null);
+      this.grid.unshift(row);
+    }
+
+    if (removed.length) {
+      this._fireEvent('clear', { rows: removed });
+    }
+
   }
 
   _fireEvent(name, payload, update = true) {

@@ -107,14 +107,39 @@ module.exports = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Tile = __webpack_require__(/*! ./Tile */ "./src/engine/Tile.js");
+const standardTiles = __webpack_require__(/*! ./StandardTiles */ "./src/engine/StandardTiles.js");
 
 module.exports = class StandardGenerator {
 
+  constructor(tiles = standardTiles) {
+    this.tiles = tiles;
+  }
+
   next() {
-    return new Tile('####', 'I');
+    return this.tiles[Math.floor(Math.random() * this.tiles.length)];
   }
 }
+
+/***/ }),
+
+/***/ "./src/engine/StandardTiles.js":
+/*!*************************************!*\
+  !*** ./src/engine/StandardTiles.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Tile = __webpack_require__(/*! ./Tile */ "./src/engine/Tile.js");
+
+module.exports = [
+  new Tile('##\n##', 'O'),
+  new Tile('#\n#\n#\n#', 'I'),
+  new Tile('#.\n#.\n##', 'L'),
+  new Tile('.#\n.#\n##', 'J'),
+  new Tile('.##\n##.', 'S'),
+  new Tile('##.\n.##', 'Z'),
+  new Tile('.#.\n###', 'T'),
+];
 
 /***/ }),
 
@@ -133,7 +158,11 @@ module.exports = class Tetris {
     this.generator = generator;
     this.listeners = new Map();
 
-    this.grid = [...new Array(height)].map(r => new Array(width));
+    this.grid = [...new Array(height)].map(r => {
+      let row = new Array(width);
+      row.fill(null);
+      return row;
+    });
 
     this.current = null;
     this.next = null;
@@ -175,7 +204,7 @@ module.exports = class Tetris {
     let position = { ...this.position };
     if (dir === 'LEFT') {
       position.x--;
-    } else {
+    } else if (dir === 'RIGHT') {
       position.x++;
     }
 
@@ -186,7 +215,7 @@ module.exports = class Tetris {
   }
 
   rotate(dir) {
-    if (this._isValid(this.current.rotate(dir), position)) {
+    if (this._isValid(this.current.rotate(dir), this.position)) {
       this.current = this.current.rotate(dir);
       this._fireEvent('rotate', { tile: this.current });
     }
@@ -247,6 +276,28 @@ module.exports = class Tetris {
     }
 
     this._fireEvent('dropend', {});
+
+    let removed = [];
+    for (let i = this.height - 1; i >= 0; i--) {
+      if (this.grid[i].filter(c => c != null).length == this.width) {
+        removed.push(i);
+      }
+    }
+
+    for (let i of removed) {
+      this.grid.splice(i, 1);
+    }
+
+    for (let i of removed) {
+      let row = new Array(this.width);
+      row.fill(null);
+      this.grid.unshift(row);
+    }
+
+    if (removed.length) {
+      this._fireEvent('clear', { rows: removed });
+    }
+
   }
 
   _fireEvent(name, payload, update = true) {
@@ -332,10 +383,25 @@ module.exports = class Tile {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+
+const Direction = __webpack_require__(/*! ./engine/Direction */ "./src/engine/Direction.js");
 const ConsoleTetris = __webpack_require__(/*! ./ui/console/ConsoleTetris */ "./src/ui/console/ConsoleTetris.js");
 
 let tetris = new ConsoleTetris();
 
+window.addEventListener('keydown', e => {
+  if (e.keyCode == '38') {
+    tetris.tetris.rotate(Direction.CCW);
+  }
+
+  if (e.keyCode == '37') {
+    tetris.tetris.move('LEFT');
+  }
+
+  if (e.keyCode == '39') {
+    tetris.tetris.move('RIGHT');
+  }
+});
 
 
 /***/ }),
@@ -353,15 +419,26 @@ const StandardGenerator = __webpack_require__(/*! ../../engine/StandardGenerator
 module.exports = class ConsoleTetris {
 
   constructor() {
+    this.scheduled = false;
+
     this.tetris = new Tetris(10, 20, new StandardGenerator());
     this.tetris.on('update', e => {
+      this._schedule();
       this.render();
-      setTimeout(() => {
-        this.tetris._step();
-      }, 300);
     });
 
     this.tetris.start();
+  }
+
+  _schedule() {
+    if (!this.scheduled) {
+      setTimeout(() => {
+        this.scheduled = false;
+        this.tetris._step();
+      }, 300);
+
+      this.scheduled = true;
+    }
   }
 
   render() {
@@ -383,7 +460,7 @@ module.exports = class ConsoleTetris {
       }
       y++;
     }
-    let rendered = grid.map(row => row.map(c => c ? '#' : ' ').join()).join('\n');
+    let rendered = grid.map(row => row.map(c => c ? '#' : ' ').join('')).join('\n');
     console.log(rendered);
   }
 

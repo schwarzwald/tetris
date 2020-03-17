@@ -1,8 +1,12 @@
-const Tile = require('./Tile');
+const standardTiles = require('./StandardTiles');
 
 module.exports = class StandardGenerator {
 
+  constructor(tiles = standardTiles) {
+    this.tiles = tiles;
+  }
+
   next() {
-    return new Tile('####', 'I');
+    return this.tiles[Math.floor(Math.random() * this.tiles.length)];
   }
 }

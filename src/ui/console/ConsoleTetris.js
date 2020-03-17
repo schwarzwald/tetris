@@ -4,15 +4,26 @@ const StandardGenerator = require('../../engine/StandardGenerator');
 module.exports = class ConsoleTetris {
 
   constructor() {
+    this.scheduled = false;
+
     this.tetris = new Tetris(10, 20, new StandardGenerator());
     this.tetris.on('update', e => {
+      this._schedule();
       this.render();
-      setTimeout(() => {
-        this.tetris._step();
-      }, 300);
     });
 
     this.tetris.start();
+  }
+
+  _schedule() {
+    if (!this.scheduled) {
+      setTimeout(() => {
+        this.scheduled = false;
+        this.tetris._step();
+      }, 300);
+
+      this.scheduled = true;
+    }
   }
 
   render() {
@@ -34,7 +45,7 @@ module.exports = class ConsoleTetris {
       }
       y++;
     }
-    let rendered = grid.map(row => row.map(c => c ? '#' : ' ').join()).join('\n');
+    let rendered = grid.map(row => row.map(c => c ? '#' : ' ').join('')).join('\n');
     console.log(rendered);
   }
 
