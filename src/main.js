@@ -6,8 +6,12 @@ import PixiTetris from './ui/pixi/PixiTetris';
 
 const tetris = new Tetris(10, 20, new StandardGenerator());
 
-//let consoleTetris = new ConsoleTetris(tetris);
+let consoleTetris = new ConsoleTetris(tetris);
 let pixiTetris = new PixiTetris(tetris);
+
+tetris.on('update', e => {
+  pixiTetris.render();
+});
 
 window.addEventListener('keydown', e => {
   if (e.keyCode == '38') {
