@@ -9,7 +9,10 @@
       "request": "launch",
       "name": "Launch game in chrome",
       "file": "${workspaceFolder}/dist/index.html",
-      "webRoot": "${workspaceFolder}"
+      "webRoot": "${workspaceFolder}",
+      "runtimeArgs": [
+        "--disable-web-security"
+      ]
     },
     {
       "type": "node",
