@@ -1,4 +1,2 @@
-module.exports = {
-  CW: 'CW',
-  CCW: 'CCW'
-}
+export const CW = 'CW';
+export const CCW = 'CCW';

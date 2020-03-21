@@ -2,5 +2,6 @@
   "editor.formatOnSave": true,
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
-  "mochaExplorer.files": "test/**/*Spec.js"
+  "mochaExplorer.files": "test/**/*Spec.js",
+  "mochaExplorer.require": "esm"
 }

@@ -1,12 +1,9 @@
-const Tetris = require('../../engine/Tetris');
-const StandardGenerator = require('../../engine/StandardGenerator');
+export default class ConsoleTetris {
 
-module.exports = class ConsoleTetris {
-
-  constructor() {
+  constructor(tetris) {
     this.scheduled = false;
 
-    this.tetris = new Tetris(10, 20, new StandardGenerator());
+    this.tetris = tetris;
     this.tetris.on('update', e => {
       this._schedule();
       this.render();

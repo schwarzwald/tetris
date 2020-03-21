@@ -1,6 +1,6 @@
-const standardTiles = require('./StandardTiles');
+import standardTiles from './StandardTiles';
 
-module.exports = class StandardGenerator {
+export default class StandardGenerator {
 
   constructor(tiles = standardTiles) {
     this.tiles = tiles;

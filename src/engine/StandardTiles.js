@@ -1,6 +1,6 @@
-const Tile = require('./Tile');
+import Tile from './Tile';
 
-module.exports = [
+export default [
   new Tile('##\n##', 'O'),
   new Tile('#\n#\n#\n#', 'I'),
   new Tile('#.\n#.\n##', 'L'),

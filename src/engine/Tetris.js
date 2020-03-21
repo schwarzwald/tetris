@@ -1,4 +1,4 @@
-module.exports = class Tetris {
+export default class Tetris {
 
   constructor(width, height, generator) {
     this.width = width;

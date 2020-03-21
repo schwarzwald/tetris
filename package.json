@@ -5,15 +5,21 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "test": "mocha test/**/*Spec.js"
+    "test": "mocha -r esm test/**/*Spec.js"
   },
   "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "esm": "^3.2.25",
     "expect.js": "^0.3.1",
+    "file-loader": "^6.0.0",
     "html-webpack-plugin": "^3.2.0",
     "mocha": "^6.2.2",
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2"
   },
   "author": "schwarzwald",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "pixi.js": "^5.2.1"
+  }
 }

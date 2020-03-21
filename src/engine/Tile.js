@@ -1,6 +1,6 @@
-const Direction = require('./Direction');
+import { CCW } from './Direction';
 
-module.exports = class Tile {
+export default class Tile {
 
   constructor(layout, tag) {
     this.layout = layout.split('\n').map(c => c.trim().split('').map(b => b == '#' ? 1 : 0));
@@ -35,8 +35,8 @@ module.exports = class Tile {
 
     this.layout.forEach((row, y) => {
       row.forEach((col, x) => {
-        let newY = dir === Direction.CCW ? -x + width - 1 : x;
-        let newX = dir === Direction.CCW ? y : -y + height - 1;
+        let newY = dir === CCW ? -x + width - 1 : x;
+        let newX = dir === CCW ? y : -y + height - 1;
 
         rotated[newY][newX] = col;
       });
